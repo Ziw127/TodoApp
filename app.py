@@ -1,11 +1,29 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
+from flask import Flask, render_template, request, session
+from flask import redirect, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
 import sys
+from authlib.integrations.flask_client import OAuth
 
 
 app = Flask(__name__)
+
+# Auth0 Config
+app.secret_key = '!secret'
+app.config.from_object('config')
+
+CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
+oauth = OAuth(app)
+oauth.register(
+    name='google',
+    server_metadata_url=CONF_URL,
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
+)
+
+# db config
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://newuser:postgres@localhost:5432/list'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -60,7 +78,7 @@ def update_todo(todo_id):
     if error:
         abort(500)
     else:
-        return redirect(url_for('index'))
+        return redirect(url_for('get_list_todos', list_id=1))
 
 @app.route('/todos/<todo_id>/delete', methods=['DELETE'])
 def delete_todo(todo_id):
