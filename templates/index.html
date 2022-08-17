@@ -4,34 +4,22 @@
     <meta http-equiv="refresh" content="60">
     <title>Todo App</title>
     <link rel="stylesheet" href="../static/styles.css">
-    <!-- <style>
-      .hidden {
-        display: none;
-      }
-      ul {
-        list-style: none;
-        padding-left: 0;
-        width: 200px;
-      }
-      li {
-        clear: both;
-      }
-      li button {
-        -webkit-appearance: none;
-        border: none;
-        outline: none;
-        color: red;
-        float: right;
-        cursor: pointer;
-        font-size: 16px;
-      }
-      .lists-wrapper, .todos-wrapper {
-        display: inline-block;
-        vertical-align: top;
-      }
-    </style> -->
   </head>
+
   <body>
+    <h1>Login Page</h1>
+  
+    {% if user %}
+    <pre>
+    <!-- {{ user|tojson }} -->
+    {{user.name}}
+    {{user.email}}
+    </pre>
+    <a href="/logout">logout</a>
+    {% else %}
+    <a href="/login">login</a>
+    {% endif %}
+    
     <h3>A SAMPLE VERSION OF TODO APP</h3>
     <div class="lists-wrapper">
         <h4>TODO LISTS</h4>

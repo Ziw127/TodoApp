@@ -122,16 +122,41 @@ def set_completed_todo(todo_id):
         return '', 200
 
 @app.route('/')
-def index():
+def homepage():
+    user = session.get('user')
+    return render_template('home.html')
+    # return redirect(url_for('get_list_todos', list_id=1))
+
+@app.route('/login')
+def login():
+    redirect_uri = url_for('authorize', _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+
+@app.route('/authorize')
+def authorize():
+    token = oauth.google.authorize_access_token()
+    user = token.get('userinfo')
+    if user:
+        session['user'] = user
+    # return render_template('login.html', user=user)
     return redirect(url_for('get_list_todos', list_id=1))
+
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    # return redirect('/')
+    return render_template('logout.html')
 
 @app.route('/lists/<list_id>')
 def get_list_todos(list_id):
     lists = TodoList.query.all()
     active_list = TodoList.query.get(list_id)
     todos = Todo.query.filter_by(list_id=list_id).order_by('id').all()
-
-    return render_template('index.html', todos=todos, lists=lists, active_list=active_list)
+    user = session['user']
+    print(user['name'], user['email'])
+    return render_template('index.html', todos=todos, lists=lists, active_list=active_list, user=user)
 
 @app.route('/lists/create', methods=['POST'])
 def create_list():
