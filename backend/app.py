@@ -33,6 +33,12 @@ migrate = Migrate(app, db)
 # from backend.src.models import *
 from models import *
 
+# test React App
+@app.route("/members")
+def members():
+    d = {"members": ["Member1", "Member3", "Member3"]}
+    return jsonify(d)
+
 
 # db.create_all()
 
@@ -250,4 +256,4 @@ def unprocessable(error):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="localhost", port=5000, debug=True)
